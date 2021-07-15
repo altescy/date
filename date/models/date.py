@@ -145,8 +145,10 @@ class DATE(Model):
             if self.training:
                 output_dict["rmd_loss"] = self._rmd_loss(rmd_logits, mask_labels)
 
+        # Shape: (batch_size, max_tokens, encoding_dim)
+        rtd_encodings = self._rtd_seq2seq_encoder(discriminator_embeddings, mask)
         # Shape: (batch_size, max_tokens, 2)
-        rtd_logits = self._rtd_projection(discriminator_embeddings)
+        rtd_logits = self._rtd_projection(rtd_encodings)
         if self.training:
             output_dict["rtd_loss"] = util.sequence_cross_entropy_with_logits(
                 rtd_logits,
